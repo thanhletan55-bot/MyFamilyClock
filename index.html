@@ -200,6 +200,10 @@
     </div>
 
     <div class="alarm-container">
+        <button class="btn" style="background-color: #008CBA; color: white; width: 90%; margin-bottom: 15px;" onclick="changeNextBackground()">
+            📸 Đổi Ảnh Nền Gia Đình
+        </button>
+        <h3>Hẹn Giờ Báo Thức</h3>
         <h3>Hẹn Giờ Báo Thức</h3>
         <div class="alarm-inputs">
             <select id="alarm-hour">
@@ -217,6 +221,56 @@
     <audio id="alarm-audio" src="https://github.com/thanhletan55-bot/ThanhMaiClock/raw/refs/heads/main/chucngungonlop2.mp3" loop></audio>
 
     <script>
+        // ====================================================
+        // PHẦN QUẢN LÝ HÌNH NỀN GIA ĐÌNH (MỚI THÊM)
+        // ====================================================
+        
+        // 1. Bạn thay 3 đường link GitHub của Bố, Mẹ, Con vào đây:
+        const familyImages = [
+            'https://raw.githubusercontent.com/ten-user/repo/main/anh_cha.jpg', 
+            'https://raw.githubusercontent.com/ten-user/repo/main/anh_me.jpg',  
+            'https://raw.githubusercontent.com/ten-user/repo/main/anh_con.jpg'
+        ];
+
+        let currentImageIndex = 0; // Biến theo dõi ảnh đang hiển thị
+        const clockFace = document.querySelector('.clock-face');
+
+        // Hàm chủ động đổi ảnh khi BẤM NÚT
+        function changeNextBackground() {
+            currentImageIndex = (currentImageIndex + 1) % familyImages.length;
+            clockFace.style.backgroundImage = `url('${familyImages[currentImageIndex]}')`;
+        }
+
+        // Hàm TỰ ĐỘNG ĐỔI ẢNH THEO THỜI GIAN (Sáng - Trưa - Tối)
+        function autoChangeBackgroundByTime() {
+            const currentHour = new Date().getHours();
+            let targetImage = familyImages[0]; // Mặc định là ảnh 1
+
+            if (currentHour >= 5 && currentHour < 12) {
+                // Từ 5h sáng đến 12h trưa: Hiện ảnh Cha
+                targetImage = familyImages[0];
+                currentImageIndex = 0;
+            } else if (currentHour >= 12 && currentHour < 18) {
+                // Từ 12h trưa đến 18h chiều: Hiện ảnh Mẹ
+                targetImage = familyImages[1];
+                currentImageIndex = 1;
+            } else {
+                // Từ 18h tối đến 5h sáng hôm sau: Hiện ảnh Con
+                targetImage = familyImages[2];
+                currentImageIndex = 2;
+            }
+
+            clockFace.style.backgroundImage = `url('${targetImage}')`;
+        }
+
+        // Chạy hàm kiểm tra thời gian ngay khi vừa load trang
+        autoChangeBackgroundByTime();
+
+        // Cứ mỗi 15 phút (900000 ms), đồng hồ sẽ tự động kiểm tra giờ để đổi ảnh một lần
+        setInterval(autoChangeBackgroundByTime, 900000);
+        
+        // ====================================================
+      
         // Tự động tạo danh sách 00-23 giờ và 00-59 phút vào ô Select
         const hourSelect = document.getElementById('alarm-hour');
         const minuteSelect = document.getElementById('alarm-minute');
